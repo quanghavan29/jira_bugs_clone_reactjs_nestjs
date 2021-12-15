@@ -1,24 +1,30 @@
-import logo from './logo.svg';
 import './App.css';
+import { BrowserRouter, Switch } from 'react-router-dom';
+import Home from './pages/Home/Home';
+import About from './pages/About/About';
+import Contact from './pages/Contact/Contact';
+import Login from './pages/Auth/Login';
+
+import { UserTemplate } from './templates/UserTemplate/UserTemplate';
+import { AuthTemplate } from './templates/AuthTemplate/AuthTemplate';
+import Register from './pages/Auth/Register';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+      <Switch>
+        {/* UserTemplate */}
+        <UserTemplate exact path='/home' Component={Home}/>
+        <UserTemplate exact path='/about' Component={About} />
+        <UserTemplate exact path='/contact' Component={Contact} />
+
+        {/* AuthTemplate */}
+        <AuthTemplate exact path='/login' Component={Login}/>
+        <AuthTemplate exact path='/register' Component={Register}/>
+
+        <UserTemplate exact path='/' Component={Home}/>
+      </Switch>
+    </BrowserRouter>
   );
 }
 
