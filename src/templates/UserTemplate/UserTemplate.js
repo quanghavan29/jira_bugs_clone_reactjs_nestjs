@@ -5,8 +5,7 @@ import Header from '../../components/Home/Header';
 
 export const UserTemplate = (props) => {
     const {Component, ...restParam} = props;
-    console.log(restParam);
-
+    
     return <Route path={restParam.path} render={(propsRoute) => {
         return <>
             <Header />

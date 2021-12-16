@@ -10,6 +10,9 @@ import { AuthTemplate } from './templates/AuthTemplate/AuthTemplate';
 import Register from './pages/Auth/Register';
 import Loading from './components/GlobalSetting/Loading/Loading';
 import { history } from './util/libs/history';
+import { JiraBugsTemplate } from './templates/JiraBugsTemplate/JiraBugsTemplate';
+import Board from './pages/Project/Board/Board';
+import ProjectSetting from './pages/Project/Settings/ProjectSetting';
 
 function App() {
   return (
@@ -24,6 +27,10 @@ function App() {
         {/* AuthTemplate */}
         <AuthTemplate exact path='/login' Component={Login} />
         <AuthTemplate exact path='/register' Component={Register} />
+
+        {/* Jira Bugs Template */}
+        <JiraBugsTemplate exact path="/project/board" Component={Board} title="Kanban Board"/>
+        <JiraBugsTemplate exact path="/project/settings" Component={ProjectSetting} title="Project Settings"/>
 
         <UserTemplate exact path='/' Component={Home} />
       </Switch>
