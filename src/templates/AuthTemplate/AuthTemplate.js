@@ -6,7 +6,9 @@ export const AuthTemplate = (props) => {
 
     return <Route {...restRoute} render={(propsRoute) => {
         return <>
-            <Component {...propsRoute} />
+            <div style={{backgroundImage: 'url(./images/auth_background.png)', height: window.innerHeight}}>
+                <Component {...propsRoute} />
+            </div>
         </>
     }} />
 }
