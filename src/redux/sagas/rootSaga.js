@@ -6,9 +6,14 @@
 import { all } from 'redux-saga/effects';
 
 import * as LoginSaga from './AuthSaga/LoginSaga';
+import * as ProjectCategorySaga from './ProjectCategorySaga/ProjectCategorySaga';
 
 export function* rootSaga() {
     yield all([
+        // Auth
         LoginSaga.loginEventListener(),
+
+        // Project Category
+        ProjectCategorySaga.porjectCategoryEventListener(),
     ])
 }

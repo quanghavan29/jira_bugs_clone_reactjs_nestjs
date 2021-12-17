@@ -1,10 +1,27 @@
-import React, { useRef } from 'react';
-import { Form, Input, Button, Select } from 'antd';
+import React, { useRef, useEffect } from 'react';
 import { Editor } from '@tinymce/tinymce-react';
+import { useSelector, useDispatch } from 'react-redux';
+import { Form, Input, Button, Select } from 'antd';
+import { GET_ALL_PROJECT_CATEGORY_SAGA } from '../../../redux/constants/ProjectCategoryConst';
+const { Option } = Select;
 
 export default function ProjectSetting() {
 
-    const { Option } = Select;
+    const { projectCategories } = useSelector(state => state.ProjectCategoryReducer);
+
+    const dispatch = useDispatch();
+
+    const renderProjectCategories = () => {
+        return projectCategories.map((projectCategory, index) => {
+            return <Option key={index} value={projectCategory.id}>{projectCategory.projectCategoryName}</Option>
+        })
+    }
+
+    useEffect(() => {
+        dispatch({
+            type: GET_ALL_PROJECT_CATEGORY_SAGA,
+        })
+    }, [])
 
     const editorRef = useRef(null);
 
@@ -25,9 +42,8 @@ export default function ProjectSetting() {
                 </div>
                 <div className="mb-3">
                     <label className="form-label">Category</label>
-                    <Select value={"web"}>
-                        <Option value="web">Web Application</Option>
-                        <Option value="mobile">Mobile Application</Option>
+                    <Select placeholder="Choose Project Category">
+                        {renderProjectCategories()}
                     </Select>
                 </div>
                 <div className="mb-3">

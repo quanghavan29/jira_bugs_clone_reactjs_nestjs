@@ -17,12 +17,12 @@ function* loginSaga(action) {
     try {
         const { data, status } = yield call(() => authService.login(userLogin));
         localStorage.setItem(ACCESS_TOKEN, data.content.accessToken);
-        localStorage.setItem(USER_LOGIN_LOCAL_STORAGE, JSON.stringify(data.content));
-        console.log(data, status);
+        localStorage.setItem(USER_LOGIN_LOCAL_STORAGE, JSON.stringify(data.content));;
 
         yield put({
             type: LOGIN_DISPATCH_REDUCER,
             userLoginDispatch: data.content, 
+            status,
         })
 
         history.push('/home');
