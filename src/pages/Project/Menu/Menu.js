@@ -21,10 +21,16 @@ export default function Menu(props) {
                         <span className="ml-2">Kanban Board</span>
                     </div>
                 </NavLink>
-                <NavLink to="/project/settings" style={{ color: '#172B4D' }} activeClassName="active font-weight-bold text-primary">
+                {/* <NavLink to="/project/settings" style={{ color: '#172B4D' }} activeClassName="active font-weight-bold text-primary">
                     <div>
                         <i className="fa fa-cog" />
                         <span className="ml-2">Project Settings</span>
+                    </div>
+                </NavLink> */}
+                <NavLink to="/project-management" style={{ color: '#172B4D' }} activeClassName="active font-weight-bold text-primary">
+                    <div>
+                        <i className="fa fa-cog" />
+                        <span className="ml-2">Project Management</span>
                     </div>
                 </NavLink>
             </div >

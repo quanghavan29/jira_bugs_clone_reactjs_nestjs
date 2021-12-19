@@ -4,8 +4,8 @@ const loginAction = (email, password) => {
     return {
         type: LOGIN_SAGA,
         userLogin: {
-            email,
-            password,
+            username: email,
+            password: password,
         }
     }
 }

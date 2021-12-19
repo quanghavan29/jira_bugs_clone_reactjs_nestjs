@@ -54,7 +54,7 @@ const LoginWithFormik = withFormik({
     }),
     validationSchema: Yup.object().shape({
         email: Yup.string().required('Email is required!').email('Email is invalid!'),
-        password: Yup.string().min(6, 'Your password must be at least 8 characters!'),
+        password: Yup.string().min(4, 'Your password must be at least 4 characters!'),
     }),
 
     handleSubmit: (values, { setSubmitting, props }) => {

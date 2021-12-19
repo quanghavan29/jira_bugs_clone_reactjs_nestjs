@@ -3,25 +3,18 @@ import { Editor } from '@tinymce/tinymce-react';
 import { useSelector, useDispatch, connect } from 'react-redux';
 import { GET_ALL_PROJECT_CATEGORY_SAGA } from '../../../redux/constants/ProjectCategoryConst';
 import { withFormik } from 'formik';
-import * as Yup from 'yup';
-import { CREATE_PROJECT_SAGA, DUPPLICATE_PROJECT_NAME } from '../../../redux/constants/ProjectConst';
-import Swal from 'sweetalert2'
 
-function ProjectSetting(props) {
+function EditProject(props) {
+
+    const dispatch = useDispatch();
+    const { projectCategories } = useSelector(state => state.ProjectCategoryReducer);
 
     const {
-        // errors,
+        values,
         handleChange,
         handleSubmit,
         setFieldValue,
-        // values,
-        // touched,
-        // handleBlur,
     } = props;
-
-    const { projectCategories } = useSelector(state => state.ProjectCategoryReducer);
-
-    const dispatch = useDispatch();
 
     const renderProjectCategories = () => {
         return projectCategories.map((projectCategory, index) => {
@@ -29,54 +22,31 @@ function ProjectSetting(props) {
         });
     };
 
-    useEffect(() => {
-        dispatch({
-            type: GET_ALL_PROJECT_CATEGORY_SAGA,
-        });
-        if (props.dupplicateProjectName === 'true') {
-            Swal.fire({
-                icon: 'error',
-                title: 'ERROR',
-                text: props.message,
-            })
-        }
-
-        if (props.dupplicateProjectName === 'false') {
-            Swal.fire({
-                icon: 'success',
-                title: 'SUCCESS',
-                text: props.message,
-            })
-        }
-
-        if (props.dupplicateProjectName !== '') {
-            dispatch({
-                type: DUPPLICATE_PROJECT_NAME,
-                value: '',
-                message: '',
-            })
-        }
-
-    }, [props.dupplicateProjectName]);
-
     const handleEditorChange = (content, editor) => {
         setFieldValue('description', content);
     };
 
+    useEffect(() => {
+        dispatch({
+            type: GET_ALL_PROJECT_CATEGORY_SAGA,
+        });
+
+    }, []);
+
     return (
         <form onSubmit={handleSubmit}>
-            <div style={{ width: '60%' }} className="mt-4">
+            <div>
                 <div className="mb-3">
                     <label className="form-label">Name</label>
-                    <input className="form-control" name="name" placeholder="ReactJS Jira Clone" required="required" onChange={handleChange} />
+                    <input className="form-control" name="name" value={values.name} required="required" onChange={handleChange} />
                 </div>
                 <div className="mb-3">
                     <label className="form-label">URL</label>
-                    <input className="form-control" name="url" placeholder="https://github.com/quanghavan29/jira_bugs_clone_reactjs_nestjs" required="required" onChange={handleChange} />
+                    <input className="form-control" name="url" value={values.url} required="required" onChange={handleChange} />
                 </div>
                 <div className="mb-3">
                     <label className="form-label">Category</label>
-                    <select className="form-control" name="projectCategoryId" onChange={handleChange}>
+                    <select className="form-control" name="projectCategoryId" value={values.projectCategoryId} onChange={handleChange}>
                         {renderProjectCategories()}
                     </select>
                 </div>
@@ -84,7 +54,7 @@ function ProjectSetting(props) {
                     <label className="form-label">Description</label>
                     <Editor
                         name="description"
-                        initialValue="<p>A Jira clone app built with ReactJS and NestJS - by quanghavan29.</p>"
+                        value={values.description}
                         init={{
                             height: 300,
                             menubar: false,
@@ -107,7 +77,9 @@ function ProjectSetting(props) {
                 </button>
                 <button type="button" className="btn btn-secondary ml-3"
                     onClick={() => {
-                        props.history.goBack();
+                        dispatch({
+                            type: 'CLOSE_DRAWER_EDIT_PROJECT',
+                        })
                     }}>
                     Cancel
                 </button>
@@ -116,41 +88,29 @@ function ProjectSetting(props) {
     )
 }
 
-const CreateProjectWithFormik = withFormik({
+const EditProjectWithFormik = withFormik({
     enableReinitialize: true,
     mapPropsToValues: (props) => {
+        const { project } = props;
         return {
-            name: '',
-            url: '',
-            description: '<p>A Jira clone app built with ReactJS and NestJS - by quanghavan29.</p>',
-            projectCategoryId: props.projectCategories[0]?.id,
+            name: project.name,
+            url: project.url,
+            description: project.description,
+            projectCategoryId: project.projectCategory.id,
         }
     },
-    // validationSchema: Yup.object().shape({
-    // }),
 
     handleSubmit: (values, { setSubmitting, props }) => {
-        setSubmitting(true);
-        props.dispatch({
-            type: CREATE_PROJECT_SAGA,
-            newProject: {
-                ...values,
-                projectCategory: {
-                    id: values.projectCategoryId,
-                }
-            }
-        });
+        console.log(values);
     },
 
     displayName: 'Jira Bugs Create Project',
-})(ProjectSetting);
+})(EditProject);
 
 const mapStateToProps = (state) => {
     return {
-        projectCategories: state.ProjectCategoryReducer.projectCategories,
-        dupplicateProjectName: state.ProjectReducer.dupplicateProjectName,
-        message: state.ProjectReducer.message,
+        project: state.ProjectDetailReducer.project,
     }
 }
 
-export default connect(mapStateToProps)(CreateProjectWithFormik);
+export default connect(mapStateToProps)(EditProjectWithFormik);

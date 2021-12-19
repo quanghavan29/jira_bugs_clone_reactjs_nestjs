@@ -7,6 +7,7 @@ import { all } from 'redux-saga/effects';
 
 import * as LoginSaga from './AuthSaga/LoginSaga';
 import * as ProjectCategorySaga from './ProjectCategorySaga/ProjectCategorySaga';
+import * as ProjectSaga from './ProjectSaga/ProjectSaga';
 
 export function* rootSaga() {
     yield all([
@@ -15,5 +16,8 @@ export function* rootSaga() {
 
         // Project Category
         ProjectCategorySaga.porjectCategoryEventListener(),
+
+        // Project
+        ProjectSaga.projectEventListener(),
     ])
 }

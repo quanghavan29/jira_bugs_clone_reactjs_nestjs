@@ -4,7 +4,7 @@ const config = {
 
 export default config;
 
-export const SERVER_API_URL = 'http://casestudy.cyberlearn.vn/api';
+export const SERVER_API_URL = 'http://localhost:8081/api';
 export const ACCESS_TOKEN = 'ACCESS_TOKEN';
 export const USER_LOGIN_LOCAL_STORAGE = 'USER_LOGIN_LOCAL_STORAGE';
 
@@ -36,6 +36,8 @@ export const APIMethod = {
 
 export const STATUS_CODE = {
     SUCCESS: 200,
+    CREATED: 201,
+    UN_AUTHORIZED: 401,
     NOT_FOUND: 404,
     SERVER_ERROR: 500,
 }

@@ -4,12 +4,12 @@ export abstract class BaseEntity {
     @PrimaryGeneratedColumn()
     id?: number;
 
-    @Column({ nullable: true })
+    @Column({ nullable: true, default: 'System' })
     createdBy?: string;
-    @CreateDateColumn({ nullable: true })
+    @Column({ nullable: true, type: 'timestamp', default: () => 'CURRENT_TIMESTAMP'})
     createdDate?: Date;
-    @Column({ nullable: true })
+    @Column({ nullable: true, default: 'System' })
     lastModifiedBy?: string;
-    @UpdateDateColumn({ nullable: true })
+    @Column({ nullable: true, type: 'timestamp', default: () => 'CURRENT_TIMESTAMP'})
     lastModifiedDate?: Date;
 }
