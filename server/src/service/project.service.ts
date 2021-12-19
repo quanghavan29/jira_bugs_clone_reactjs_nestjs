@@ -49,4 +49,9 @@ export class ProjectService {
         return ProjectMapper.fromEntityToDTO(projectFind);
     }
 
+    async update(projectDTO: ProjectDTO): Promise<ProjectDTO | undefined> {
+
+        return;
+    }
+
 }

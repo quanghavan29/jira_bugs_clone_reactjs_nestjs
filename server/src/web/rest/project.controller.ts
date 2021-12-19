@@ -8,6 +8,7 @@ import {
     ClassSerializerInterceptor,
     Get,
     Req,
+    Put,
 } from '@nestjs/common';
 import { Request } from 'express';
 import { AuthGuard, Roles, RolesGuard, RoleType } from '../../security';
@@ -64,11 +65,25 @@ export class ProjectController {
         description: 'Project detail',
         type: ProjectDTO,
     })
-    async getProjectById(@Req() req: Request): Promise<ProjectDTO | undefined> {
+    async getProjectDetail(@Req() req: Request): Promise<ProjectDTO | undefined> {
         const id = req.query.id;
         const project = await this.projectService.findById(id);
 
         return project
+    }
+
+    @Put('/update')
+    @Roles(RoleType.USER)
+    @ApiOperation({ title: 'Update project' })
+    @ApiResponse({
+        status: 200,
+        description: 'The record has been successfully updated.',
+        type: ProjectDTO,
+    })
+    async updateProject(@Body() projectDTO: ProjectDTO): Promise<ProjectDTO | undefined> {
+        const projectUpdated = await this.projectService.update(projectDTO);
+        
+        return projectUpdated;
     }
 
 }
