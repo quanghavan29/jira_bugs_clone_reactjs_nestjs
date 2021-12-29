@@ -1,14 +1,14 @@
 const initialState = {
     visibleModalViewProject: false,
     visibleDrawerEditProject: false,
-    project: {}
+    project: {id: 33, name: 'ReactJS Jira Clone'},
 }
 
 const ProjectDetailReducer = (state = initialState, action) => {
     switch (action.type) {
 
         case 'SHOW_MODAL_VIEW_PROJECT':
-            return { ...state, visibleModalViewProject: true, project: action.project }
+            return { ...state, visibleModalViewProject: true, project: action.project };
 
         case 'CLOSE_MODAL_VIEW_PROJECT':
             return { ...state, visibleModalViewProject: false }
@@ -22,7 +22,7 @@ const ProjectDetailReducer = (state = initialState, action) => {
         }
 
         default:
-            return state
+            return state;
     }
 }
 

@@ -1,10 +1,10 @@
 import { LOGIN_SAGA } from "../../constants/AuthConst"
 
-const loginAction = (email, password) => {
+const loginAction = (username, password) => {
     return {
         type: LOGIN_SAGA,
         userLogin: {
-            username: email,
+            username: username,
             password: password,
         }
     }

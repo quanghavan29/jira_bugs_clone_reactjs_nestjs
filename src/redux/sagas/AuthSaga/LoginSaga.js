@@ -1,10 +1,11 @@
 import { call, delay, put, takeLatest } from "redux-saga/effects";
 import { LOGIN_DISPATCH_REDUCER, LOGIN_SAGA } from "../../constants/AuthConst";
 import { authService } from '../../../services/AuthService/AuthService';
-import { DISPLAY_LOADING, HIDE_LOADING } from "../../constants/LoadingConst";
+import { DISPLAY_LOADING, HIDE_LOADING, LOADING_DELAY } from "../../constants/LoadingConst";
 import { ACCESS_TOKEN, STATUS_CODE, USER_LOGIN_LOCAL_STORAGE } from "../../../util/config/constants";
 import { history } from "../../../util/libs/history";
 import { accountService } from "../../../services/AccountService/AccountService";
+import { openNotification } from "../../../util/notification/notification";
 
 function* loginSaga(action) {
     let { userLogin } = action;
@@ -28,12 +29,13 @@ function* loginSaga(action) {
             localStorage.setItem(USER_LOGIN_LOCAL_STORAGE, JSON.stringify(userLogin.data));;
         }
 
-        history.push('/project/board');
+        history.push('/project/board/33');
     } catch (error) {
-        console.log('Error Login Saga: ', error);
+        console.log('Error Login Saga: ', error);   
+        openNotification('error', 'Login Fail!', 'Username or password incorrect!')
     }
 
-    yield delay(500);
+    yield delay(LOADING_DELAY);
 
     yield put({
         type: HIDE_LOADING,

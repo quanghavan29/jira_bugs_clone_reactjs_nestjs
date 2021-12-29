@@ -3,6 +3,7 @@ import { Editor } from '@tinymce/tinymce-react';
 import { useSelector, useDispatch, connect } from 'react-redux';
 import { GET_ALL_PROJECT_CATEGORY_SAGA } from '../../../redux/constants/ProjectCategoryConst';
 import { withFormik } from 'formik';
+import { UPDATE_PORJECT_SAGA } from '../../../redux/constants/ProjectConst';
 
 function EditProject(props) {
 
@@ -93,6 +94,7 @@ const EditProjectWithFormik = withFormik({
     mapPropsToValues: (props) => {
         const { project } = props;
         return {
+            id: project.id,
             name: project.name,
             url: project.url,
             description: project.description,
@@ -101,10 +103,19 @@ const EditProjectWithFormik = withFormik({
     },
 
     handleSubmit: (values, { setSubmitting, props }) => {
-        console.log(values);
+        setSubmitting(true);
+        props.dispatch({
+            type: UPDATE_PORJECT_SAGA,
+            projectUpdate: { 
+                ...values,
+                projectCategory: {
+                    id: values.projectCategoryId,
+                }
+            }
+        })
     },
 
-    displayName: 'Jira Bugs Create Project',
+    displayName: 'Jira Bugs Edit Project',
 })(EditProject);
 
 const mapStateToProps = (state) => {

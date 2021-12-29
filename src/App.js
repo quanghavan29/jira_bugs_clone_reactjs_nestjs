@@ -11,6 +11,8 @@ import ProjectSetting from './pages/Project/Settings/ProjectSetting';
 import ProjectManagement from './pages/Project/ProjectManagement/ProjectManagement';
 import ViewProjectModal from './pages/Project/Modal/ViewProjectModal';
 import EditProjectDrawer from './pages/Project/Drawer/EditProjectDrawer';
+import CreateTaskModal from './pages/Project/Modal/CreateTaskModal';
+import ViewTaskModal from './pages/Project/Modal/ViewTaskModal';
 
 function App() {
   return (
@@ -18,6 +20,8 @@ function App() {
       <Loading />
       <ViewProjectModal />
       <EditProjectDrawer />
+      <CreateTaskModal />
+      <ViewTaskModal />
 
       <Switch>
 
@@ -26,13 +30,14 @@ function App() {
         <AuthTemplate exact path='/register' Component={Register} />
 
         {/* Jira Bugs Template */}
-        <JiraBugsTemplate exact path="/project/board" Component={Board} title="Kanban Board" />
+        <JiraBugsTemplate exact path="/project/board/:id" Component={Board} title="Kanban Board" />
         <JiraBugsTemplate exact path="/project-management/settings" Component={ProjectSetting} title="Project Settings" />
 
         {/* Project Management */}
         <JiraBugsTemplate exact path="/project-management" Component={ProjectManagement} title="Project Management" />
 
-        <JiraBugsTemplate exact path="/" Component={Board} title="Kanban Board" />
+        <AuthTemplate path='/' Component={Login} />
+        {/* <JiraBugsTemplate exact path="/" Component={Board} title="Kanban Board" /> */}
       </Switch>
     </Router>
   );

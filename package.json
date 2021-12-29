@@ -10,6 +10,7 @@
     "@tinymce/tinymce-react": "^3.13.0",
     "antd": "^4.10.2",
     "axios": "^0.24.0",
+    "dateformat": "^5.0.2",
     "formik": "^2.2.9",
     "history": "^4.10.0",
     "html-react-parser": "^1.4.4",

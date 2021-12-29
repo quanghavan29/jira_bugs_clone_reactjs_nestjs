@@ -89,9 +89,9 @@
 
 /* Menu */
 .menu {
-  height: 100vh;
-  width: 18%;
-  margin-left: 4%;
+  height: 110vh;
+  width: 16%;
+  margin-left: 3%;
   background-color: #f4f5f7;
 }
 
@@ -132,7 +132,7 @@
   margin-bottom: 8%;
   border-bottom: 2px solid #c4c5c6;
   margin-left: 7%;
-  margin-right: 7%;
+  margin-right: 1%;
   color: #172B4D;
 }
 
@@ -179,7 +179,7 @@
 
 .main {
   padding-left: 2%;
-  width: 78%;
+  width: 80%;
 }
 
 .main .header .breadcrumb {
@@ -357,11 +357,11 @@
 }
 
 .modal-info .modal-content {
-  padding: 20px 24px;
+  /* padding: 20px 24px; */
 }
 
 .modal-info .modal-content .modal-header {
-  padding: 1rem 2rem;
+  /* padding: 1rem 2rem; */
   border-bottom: none;
 }
 
@@ -397,7 +397,7 @@
 
 .input-comment input {
   width: 100%;
-  height: 45px;
+  height: 40px;
   padding: 10px;
 }
 

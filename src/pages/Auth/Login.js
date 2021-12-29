@@ -24,11 +24,11 @@ function Login(props) {
             <div>
                 <h3 style={{ fontWeight: 'bold', fontSize: 35 }}>Jira Bugs Login</h3>
                 <div className="d-flex mt-4" >
-                    <Input style={{ width: '100%' }} name="email" size="large" placeholder="Email address" prefix={<UserOutlined />}
+                    <Input style={{ width: '100%' }} name="username" size="large" placeholder="Username" prefix={<UserOutlined />}
                         onChange={handleChange}
                     />
                 </div>
-                <div className="d-flex text-danger">{errors.email}</div>
+                <div className="d-flex text-danger">{errors.username}</div>
                 <div className="d-flex mt-3">
                     <Input style={{ width: '100%' }} name="password" type="password" size="large" placeholder="Password" prefix={<LockOutlined />}
                         onChange={handleChange}
@@ -49,18 +49,18 @@ function Login(props) {
 
 const LoginWithFormik = withFormik({
     mapPropsToValues: () => ({
-        email: '',
+        username: '',
         password: '',
     }),
     validationSchema: Yup.object().shape({
-        email: Yup.string().required('Email is required!').email('Email is invalid!'),
+        username: Yup.string().required('Username is required!'),
         password: Yup.string().min(4, 'Your password must be at least 4 characters!'),
     }),
 
     handleSubmit: (values, { setSubmitting, props }) => {
-        let { email, password } = values;
+        let { username, password } = values;
         setSubmitting(true);
-        props.dispatch(loginAction(email, password));
+        props.dispatch(loginAction(username, password));
     },
 
     displayName: 'Jira Bugs Login',

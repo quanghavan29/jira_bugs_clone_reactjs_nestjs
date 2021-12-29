@@ -1,8 +1,12 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import ReactLogo from '../../../logo.svg';
 
 export default function Menu(props) {
+
+    const {project} = useSelector(state => state.ProjectReducer);
+
     return (
         <div className="menu">
             <div className="account">
@@ -15,7 +19,7 @@ export default function Menu(props) {
                 </div>
             </div>
             <div className="control">
-                <NavLink to="/project/board" style={{ color: '#172B4D' }} activeClassName="active font-weight-bold text-primary">
+                <NavLink to={`/project/board/${project?.id}`} style={{ color: '#172B4D' }} activeClassName="active font-weight-bold text-primary">
                     <div>
                         <i className="fa fa-credit-card" />
                         <span className="ml-2">Kanban Board</span>

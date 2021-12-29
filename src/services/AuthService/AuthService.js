@@ -10,5 +10,13 @@ export const authService = {
         })
 
         return response;
+    },
+
+    register: (userRegister) => {
+        return axios({
+            url: `${SERVER_API_URL}/register`,
+            method: 'POST',
+            data: userRegister,
+        })
     }
 }

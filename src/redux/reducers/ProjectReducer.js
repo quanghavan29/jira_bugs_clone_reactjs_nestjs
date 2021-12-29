@@ -4,6 +4,7 @@ const initialState = {
     dupplicateProjectName: '',
     message: '',
     projects: [],
+    project: {id: 33, name: 'ReactJS Jira Clone'},
 }
 
 const ProjectReducer = (state = initialState, action) => {
@@ -23,6 +24,10 @@ const ProjectReducer = (state = initialState, action) => {
 
             return {...state};
         };
+
+        case 'GET_PROJECT_DETAIL_BOARD': {
+            return {...state, project: action.project};
+        }
 
         default:
             return state

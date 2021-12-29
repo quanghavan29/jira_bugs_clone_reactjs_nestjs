@@ -4,6 +4,7 @@ const config = {
 
 export default config;
 
+// export const SERVER_API_URL = 'https://reactjs-jira-clone.herokuapp.com/api';
 export const SERVER_API_URL = 'http://localhost:8081/api';
 export const ACCESS_TOKEN = 'ACCESS_TOKEN';
 export const USER_LOGIN_LOCAL_STORAGE = 'USER_LOGIN_LOCAL_STORAGE';
