@@ -1,8 +1,10 @@
 import { Editor } from '@tinymce/tinymce-react';
-import { Avatar, Button, Input, Modal, Select, Tag } from 'antd';
-import React, { useEffect, useState } from 'react'
+import { AutoComplete, Avatar, Button, Input, Modal, Popover, Select, Tag } from 'antd';
+import React, { useEffect, useRef, useState } from 'react'
 import { connect, useDispatch, useSelector } from 'react-redux';
+import { GET_LIST_MEMBERS_SAGA } from '../../../redux/constants/ProjectConst';
 import { GET_TASK_DETAIL_SAGA, UPDATE_TASK_SAGA } from '../../../redux/constants/TaskConst';
+import { SEARCH_USER_SAGA } from '../../../redux/constants/UserConst';
 import { USER_LOGIN_LOCAL_STORAGE } from '../../../util/config/constants';
 const { Option } = Select;
 
@@ -10,7 +12,11 @@ function ViewTaskModal(props) {
     const { visible, task } = useSelector(state => state.ViewTaskReducer);
     // const [status, setStatus] = useState(task?.status);
     const [visibleEditTaskName, setVisibleEditTaskName] = useState(false);
-    const [taskName, setTaskName] = useState(props.taskName);
+    const [taskName, setTaskName] = useState();
+    const [description, setDescription] = useState();
+
+    const [usernameSearch, setUsernameSearch] = useState('');
+    const { members } = useSelector(state => state.ListMembersReducer);
 
     const dispatch = useDispatch();
 
@@ -22,9 +28,57 @@ function ViewTaskModal(props) {
         userLogin = { ...JSON.parse(localStorage.getItem(USER_LOGIN_LOCAL_STORAGE)) };
     }
 
+
+    const searchRef = useRef(null);
+
     // useEffect(() => {
-    //     setTaskName(props.taskName)
-    // }, [taskName])
+    //     setDescription(props.description)
+    // }, [])
+
+    const content = (record) => {
+        return (
+            <div>
+                <AutoComplete
+                    value={usernameSearch}
+                    onChange={(value) => {
+                        setUsernameSearch(value);
+                    }}
+                    options={
+                        members?.filter(member => {
+                            let index = task.usersAssign?.findIndex(userAssign => userAssign.id == member.id);
+                            if (index !== -1) {
+                                return false;
+                            }
+                            return true;
+                        }).map((user, index) => {
+                            return { label: user.login, value: user.id, key: index }
+                        })
+                    }
+                    style={{ width: '100%' }}
+                    onSelect={(value, option) => {
+                        setUsernameSearch(option.label);
+                        let newUsersAssign = [...task.usersAssign, { id: value }];
+                        dispatch({
+                            type: UPDATE_TASK_SAGA,
+                            taskUpdate: { ...task, usersAssign: newUsersAssign },
+                        });
+                    }}
+                    onSearch={(value) => {
+                        if (searchRef.current) {
+                            clearTimeout(searchRef.current);
+                        }
+                        searchRef.current = setTimeout(() => {
+                            dispatch({
+                                type: GET_LIST_MEMBERS_SAGA,
+                                projectId: task?.project.id,
+                            })
+                        }, 300)
+                    }}
+                    placeholder="Username"
+                />
+            </div>
+        )
+    };
 
     const usersAssign = task?.usersAssign;
 
@@ -112,7 +166,7 @@ function ViewTaskModal(props) {
                                         <div className="form-group">
                                             <span style={{ fontWeight: 500, color: '#172B4D', fontSize: 24 }}>{task?.name}</span>
                                             <i className="fa fa-edit ml-2" style={{ cursor: 'pointer', fontSize: 18, color: '#23B6A4' }}
-                                                onClick={() => { 
+                                                onClick={() => {
                                                     setVisibleEditTaskName(true);
                                                     setTaskName(props.taskName);
                                                 }}
@@ -125,7 +179,7 @@ function ViewTaskModal(props) {
                                     <p>Description</p>
                                     <Editor
                                         name="description"
-                                        initialValue={task.description}
+                                        initialValue={task?.description}
                                         init={{
                                             height: 300,
                                             menubar: false,
@@ -140,11 +194,24 @@ function ViewTaskModal(props) {
                                                 'removeformat | help',
                                             content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
                                         }}
+                                        onEditorChange={(content, editor) => {
+                                            setDescription(content);
+                                        }}
                                     />
                                 </div>
                                 <div className="mt-3">
-                                    <Button type="primary">Save</Button>
-                                    <Button className="ml-2">Cancel</Button>
+                                    <Button type="primary" onClick={() => {
+                                        let newDescription = task?.description;
+                                        if (description) {
+                                            newDescription = description;
+                                        }
+                                        dispatch({
+                                            type: UPDATE_TASK_SAGA,
+                                            taskUpdate: { ...task, description: newDescription },
+                                        })
+                                    }}>Save</Button>
+                                    <Button className="ml-2" onClick={() => {
+                                    }}>Cancel</Button>
                                 </div>
                                 <div className="comment mt-5">
                                     <h6>Comment</h6>
@@ -218,15 +285,23 @@ function ViewTaskModal(props) {
                                                     <span>
                                                         {isLongTag ? `${user.login.slice(0, 10)}...` : user.login}
                                                     </span>
-                                                    <i className="fa fa-times ml-2" style={{ cursor: 'pointer' }} />
+                                                    <i className="fa fa-times ml-2" style={{ cursor: 'pointer' }} onClick={() => {
+                                                        let newUsersAssign = task.usersAssign.filter(userAssign => userAssign.id !== user.id);
+                                                        dispatch({
+                                                            type: UPDATE_TASK_SAGA,
+                                                            taskUpdate: { ...task, usersAssign: newUsersAssign },
+                                                        });
+                                                    }} />
                                                 </Tag>
                                             );
                                         })}
-                                        <Tag className="site-tag-plus mt-2" style={{ cursor: 'pointer' }}>
-                                            <span style={{ color: "#0052CC" }}>
-                                                <i className="fa fa-plus" /> ADD MORE
-                                            </span>
-                                        </Tag>
+                                        <Popover placement="topLeft" title={"Add Member"} content={content()} trigger="click">
+                                            <Tag className="site-tag-plus mt-2" style={{ cursor: 'pointer' }}>
+                                                <span style={{ color: "#0052CC" }}>
+                                                    <i className="fa fa-plus" /> ADD MORE
+                                                </span>
+                                            </Tag>
+                                        </Popover>
                                     </div>
                                 </div>
                                 <div className="reporter mt-3">
@@ -287,6 +362,7 @@ function ViewTaskModal(props) {
 const mapStateToProps = (state) => {
     return {
         taskName: state.ViewTaskReducer.task.name,
+        description: state.ViewTaskReducer.task.description,
     }
 }
 
