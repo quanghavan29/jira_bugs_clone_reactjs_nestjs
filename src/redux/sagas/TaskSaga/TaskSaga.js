@@ -7,7 +7,7 @@ import { STATUS_CODE } from "../../../util/config/constants";
 import { openNotification } from "../../../util/notification/notification";
 import { DISPLAY_LOADING, HIDE_LOADING, LOADING_DELAY } from "../../constants/LoadingConst";
 import { GET_PROJECT_BOARD_SAGA } from '../../constants/ProjectConst';
-import { CREATE_TASK_SAGA, GET_ALL_TASKS_BY_PROJECT_SAGA, GET_TASK_DETAIL_SAGA, SHOW_CREATE_TASK_MODAL_SAGA, UPDATE_TASK_SAGA } from "../../constants/TaskConst";
+import { CREATE_TASK_SAGA, GET_ALL_TASKS_BY_PROJECT_SAGA, GET_TASK_DETAIL_SAGA, SHOW_CREATE_TASK_MODAL_SAGA, UPDATE_TASK_SAGA, UPDATE_TASK_STATUS_SAGA } from "../../constants/TaskConst";
 
 function* showCreateTaskModalSaga(action) {
     try {
@@ -134,7 +134,7 @@ function* updateTaskSaga(action) {
         yield console.log(action);
         const { data, status } = yield call(() => taskService.updateTask(taskUpdate));
         if (status === STATUS_CODE.SUCCESS) {
-            console.log('task updated: ', data);
+            // console.log('task updated: ', data);
             yield put({
                 type: GET_TASK_DETAIL_SAGA,
                 taskId: data.id,
@@ -153,10 +153,43 @@ function* updateTaskSaga(action) {
     }
 }
 
+function* updateTaskStatusSaga(action) {
+    const { taskUpdate } = action;
+    
+    yield put({
+        type: DISPLAY_LOADING,
+    });
+
+    try {
+        yield console.log(action);
+        const { data, status } = yield call(() => taskService.updateTask(taskUpdate));
+        if (status === STATUS_CODE.SUCCESS) {
+            console.log('task updated: ', data);
+
+            yield put({
+                type: GET_ALL_TASKS_BY_PROJECT_SAGA,
+                projectId: data.project.id,
+            })
+
+        }
+    } catch (error) {
+        console.log('Error Update Task Saga: ', error);
+        openNotification('error', 'Fail!', 'Internal Server Error!');
+    }
+
+    yield delay(LOADING_DELAY);
+
+    yield put({
+        type: HIDE_LOADING,
+    });
+}
+
+
 export function* taskEventListener() {
     yield takeLatest(SHOW_CREATE_TASK_MODAL_SAGA, showCreateTaskModalSaga);
     yield takeLatest(CREATE_TASK_SAGA, createTaskSaga);
     yield takeLatest(GET_ALL_TASKS_BY_PROJECT_SAGA, getAllTasksByProjectSaga);
     yield takeLatest(GET_TASK_DETAIL_SAGA, getTaskDetailSaga);
     yield takeLatest(UPDATE_TASK_SAGA, updateTaskSaga);
+    yield takeLatest(UPDATE_TASK_STATUS_SAGA, updateTaskStatusSaga);
 }

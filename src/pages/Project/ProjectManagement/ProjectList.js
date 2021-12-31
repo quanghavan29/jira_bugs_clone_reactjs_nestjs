@@ -68,7 +68,8 @@ export default function ProjectList(props) {
     };
 
     // const text = <span>Title</span>;
-    const content = (record) => {
+    const content = (record, index) => {
+        // console.log('record: ', record);
         return (
             <div>
                 <AutoComplete
@@ -77,7 +78,17 @@ export default function ProjectList(props) {
                         setUsernameSearch(value);
                     }}
                     options={
-                        usersSearched?.map((user, index) => {
+                        // usersSearched?.map((user, index) => {
+                        //     return { label: user.login, value: user.id, key: index }
+                        // })
+
+                        usersSearched?.filter(user => {
+                            let index = record.members.findIndex(member => member.id === user.id);
+                            if (index !== -1) {
+                                return false;
+                            }
+                            return true;
+                        }).map((user, index) => {
                             return { label: user.login, value: user.id, key: index }
                         })
                     }
@@ -116,7 +127,7 @@ export default function ProjectList(props) {
             dataIndex: 'name',
             key: 'name',
             render: (text, record, index) => {
-                return <NavLink to={`/project/board/${record.id}`} style={{cursor: 'pointer'}}>{text}</NavLink>
+                return <NavLink to={`/project/board/${record.id}`} style={{ cursor: 'pointer' }}>{text}</NavLink>
             },
             sorter: (a, b) => a.name.length - b.name.length,
             sortOrder: sortedInfo.columnKey === 'name' && sortedInfo.order,
@@ -155,7 +166,7 @@ export default function ProjectList(props) {
                             return (member.imageUrl === '' || member.imageUrl === null) ? <Avatar key={index}>{member.login.charAt(0).toUpperCase()}</Avatar> : <Avatar src={member.imageUrl} key={index} />
                         })}
                     </Avatar.Group>
-                    <Popover placement="topLeft" title={"Add Member"} content={content(record)} trigger="click">
+                    <Popover placement="topLeft" title={"Add Member"} content={content(record, index)} trigger="click">
                         <Button type="primary" size="small" style={{ fontWeight: 'bold', fontSize: 15 }}>
                             +
                         </Button>

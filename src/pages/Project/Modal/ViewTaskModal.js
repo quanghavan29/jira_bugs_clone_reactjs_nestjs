@@ -35,7 +35,7 @@ function ViewTaskModal(props) {
     //     setDescription(props.description)
     // }, [])
 
-    const content = (record) => {
+    const content = () => {
         return (
             <div>
                 <AutoComplete
