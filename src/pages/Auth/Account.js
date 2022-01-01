@@ -1,41 +1,13 @@
-import { Input, Upload, Button } from 'antd'
+import { Input, Button } from 'antd'
 import Avatar from 'antd/lib/avatar/avatar';
 import React, { useState } from 'react'
+import { useDispatch } from 'react-redux';
+import { UPDATE_USER_SAGA } from '../../redux/constants/UserConst';
 import { USER_LOGIN_LOCAL_STORAGE } from '../../util/config/constants';
-import { UploadOutlined } from '@ant-design/icons';
 
 export default function Account(props) {
 
-    const propsUploadAvatar = {
-        // action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
-        listType: 'picture',
-        beforeUpload(file) {
-            return new Promise(resolve => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = () => {
-                    const img = document.createElement('img');
-                    img.src = reader.result;
-                    img.onload = () => {
-                        const canvas = document.createElement('canvas');
-                        canvas.width = img.naturalWidth;
-                        canvas.height = img.naturalHeight;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0);
-                        ctx.fillStyle = 'red';
-                        ctx.textBaseline = 'middle';
-                        ctx.font = '33px Arial';
-                        ctx.fillText('Ant Design', 20, 20);
-                        canvas.toBlob(resolve);
-                    };
-                    setDisabledBtnSaveAvatar(false);
-                };
-            });
-        },
-        onRemove() {
-            setDisabledBtnSaveAvatar(true);
-        }
-    };
+    const dispatch = useDispatch();
 
     let userLoginLocal = {};
 
@@ -43,7 +15,31 @@ export default function Account(props) {
         userLoginLocal = { ...JSON.parse(localStorage.getItem(USER_LOGIN_LOCAL_STORAGE)) };
     }
 
-    const [userLogin, setUserLogin] = useState(userLoginLocal);
+    const [userLogin, setUserLogin] = useState({
+        values: {
+            id: userLoginLocal.id,
+            firstName: userLoginLocal.firstName,
+            lastName: userLoginLocal.lastName,
+            email: userLoginLocal.email,
+            newPassword: '',
+        },
+        errors: {
+            firstName: '',
+            lastName: '',
+            email: '',
+            newPassword: '',
+        },
+    });
+
+    const handleOnChange = (e) => {
+        const { type, name, value } = e.target;
+
+        // console.log('type: ', type);
+        // console.log('name: ', name);
+        // console.log('value: ', value);
+        setUserLogin({ ...userLogin, values: { ...userLogin.values, [name]: value } })
+    }
+
     const [disabledBtnSaveAvatar, setDisabledBtnSaveAvatar] = useState(true);
 
     return (
@@ -54,8 +50,8 @@ export default function Account(props) {
                 padding: 30,
             }}>
                 <div>
-                    {(userLogin.imageUrl === '' || userLogin.imageUrl === null) ?
-                        <Avatar icon={<i className="fa fa-user-alt" style={{ fontSize: 60, marginTop: 12 }}></i>} style={{ width: 100, height: 100 }} /> : <Avatar src={userLogin.imageUrl} style={{ width: 100, height: 100 }} />
+                    {(userLoginLocal.imageUrl === '' || userLoginLocal.imageUrl === null) ?
+                        <Avatar icon={<i className="fa fa-user-alt" style={{ fontSize: 60, marginTop: 12 }}></i>} style={{ width: 100, height: 100 }} /> : <Avatar src={userLoginLocal.imageUrl} style={{ width: 100, height: 100 }} />
                     }
                 </div>
 
@@ -64,10 +60,7 @@ export default function Account(props) {
                 </div>
 
                 <div className="mt-3">
-                    {/* <Upload {...propsUploadAvatar}>
-                        <Button icon={<UploadOutlined />}>Upload Avatar</Button>
-                    </Upload> */}
-                    <input type="file"/>
+                    <input className="ml-4" type="file" />
                     <Button type="primary" className="mt-3" disabled={disabledBtnSaveAvatar}>
                         Save
                     </Button>
@@ -83,27 +76,28 @@ export default function Account(props) {
                 <div>
                     <div className="mb-3">
                         <label className="form-label">First name</label>
-                        <Input type="text" name="firstName" className="form-control" />
+                        <Input type="text" name="firstName" className="form-control" value={userLogin.values.firstName} onChange={handleOnChange} />
                     </div>
                     <div className="mb-3">
                         <label className="form-label">Last name</label>
-                        <Input type="text" name="lastName" className="form-control" />
+                        <Input type="text" name="lastName" className="form-control" value={userLogin.values.lastName} onChange={handleOnChange} />
                     </div>
                     <div className="mb-3">
                         <label className="form-label">Email address</label>
-                        <Input type="email" name="email" className="form-control" value={userLogin.email} placeholder="email@example.com" onChange={(e) => {
-                            setUserLogin({ ...userLogin, email: e.target.value })
-                        }} />
-                    </div>
-                    <div className="mb-3">
-                        <label className="form-label">Old password</label>
-                        <Input type="text" className="form-control" />
+                        <Input type="email" name="email" className="form-control" value={userLogin.values.email} placeholder="email@example.com" onChange={handleOnChange} />
                     </div>
                     <div className="mb-3">
                         <label className="form-label">New password</label>
-                        <Input type="text" className="form-control" />
+                        <Input type="password" name="newPassword" className="form-control" onChange={handleOnChange} />
                     </div>
-
+                    <Button type="primary" className="mt-3" onClick={() => {
+                        dispatch({
+                            type: UPDATE_USER_SAGA,
+                            userUpdate: {...userLogin.values},
+                        })
+                    }}>
+                        Save
+                    </Button>
                 </div>
             </div>
         </div >

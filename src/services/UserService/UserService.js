@@ -11,5 +11,16 @@ export const userService = {
         })
 
         return response;
+    },
+    updateUser: (userUpdate) => {
+        const id_token = localStorage.getItem(ACCESS_TOKEN);
+        const response = axios({
+            url: `${SERVER_API_URL}/users/update-user`,
+            method: 'PUT',
+            data: {...userUpdate},
+            headers: { 'authorization': 'Bearer ' + id_token },
+        })
+
+        return response;
     }
 }
