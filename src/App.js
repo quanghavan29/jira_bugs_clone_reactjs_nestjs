@@ -13,6 +13,7 @@ import ViewProjectModal from './pages/Project/Modal/ViewProjectModal';
 import EditProjectDrawer from './pages/Project/Drawer/EditProjectDrawer';
 import CreateTaskModal from './pages/Project/Modal/CreateTaskModal';
 import ViewTaskModal from './pages/Project/Modal/ViewTaskModal';
+import Account from './pages/Auth/Account';
 
 function App() {
   return (
@@ -35,6 +36,9 @@ function App() {
 
         {/* Project Management */}
         <JiraBugsTemplate exact path="/project-management" Component={ProjectManagement} title="Project Management" />
+
+        {/* Project Management */}
+        <JiraBugsTemplate exact path="/account" Component={Account} title="Account" />
 
         <AuthTemplate path='/' Component={Login} />
         {/* <JiraBugsTemplate exact path="/" Component={Board} title="Kanban Board" /> */}

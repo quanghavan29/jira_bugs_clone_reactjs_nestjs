@@ -25,7 +25,9 @@ export default function Header(props) {
     const menu = (
         <Menu onClick={handleMenuClick}>
             <Menu.Item key="1" style={{ display: 'flex' }}>
-                <div><i className="fa fa-user"></i><span className="ml-3">Account</span></div>
+                <NavLink to="/account">
+                    <div><i className="fa fa-user"></i><span className="ml-3">Account</span></div>
+                </NavLink>
             </Menu.Item>
 
             <Menu.Item key="2">

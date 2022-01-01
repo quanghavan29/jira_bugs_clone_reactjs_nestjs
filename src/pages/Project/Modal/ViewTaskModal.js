@@ -1,19 +1,23 @@
 import { Editor } from '@tinymce/tinymce-react';
-import { AutoComplete, Avatar, Button, Input, Modal, Popover, Select, Tag } from 'antd';
+import { AutoComplete, Avatar, Button, Input, Modal, Popconfirm, Popover, Select, Tag } from 'antd';
 import React, { useEffect, useRef, useState } from 'react'
 import { connect, useDispatch, useSelector } from 'react-redux';
+import { CREATE_COMMENT_SAGA, DELETE_COMMENT_SAGA } from '../../../redux/constants/CommentConts';
 import { GET_LIST_MEMBERS_SAGA } from '../../../redux/constants/ProjectConst';
 import { GET_TASK_DETAIL_SAGA, UPDATE_TASK_SAGA } from '../../../redux/constants/TaskConst';
 import { SEARCH_USER_SAGA } from '../../../redux/constants/UserConst';
 import { USER_LOGIN_LOCAL_STORAGE } from '../../../util/config/constants';
+import { openNotification } from '../../../util/notification/notification';
 const { Option } = Select;
 
 function ViewTaskModal(props) {
     const { visible, task } = useSelector(state => state.ViewTaskReducer);
+
     // const [status, setStatus] = useState(task?.status);
     const [visibleEditTaskName, setVisibleEditTaskName] = useState(false);
     const [taskName, setTaskName] = useState();
     const [description, setDescription] = useState();
+    const [commentContent, setCommentContent] = useState('');
 
     const [usernameSearch, setUsernameSearch] = useState('');
     const { members } = useSelector(state => state.ListMembersReducer);
@@ -103,6 +107,57 @@ function ViewTaskModal(props) {
         </div>
     }
 
+    const renderCommnets = () => {
+        return (
+            task?.comments?.map((comment, index) => {
+                return (
+                    <div className="comment-item" key={index}>
+                        <div className="display-comment" style={{ display: 'flex' }}>
+                            <div className="avatar">
+                                {(comment.user.imageUrl === '' || comment.user.imageUrl === null) ?
+                                    <Avatar icon={<i className="fa fa-user-alt"></i>} /> : <Avatar src={comment.user.imageUrl} />
+                                }
+                            </div>
+                            <div>
+                                <p style={{ marginBottom: 5, fontSize: 16, color: '#42526E' }}>
+                                    {comment.user.login}
+                                    {/* <span>a month ago</span> */}
+                                </p>
+                                <p style={{ marginBottom: 0, color: '172B4D' }}>
+                                    {comment.content}
+                                </p>
+                                {userLogin.id === comment.user.id ?
+                                    <div>
+                                        <span style={{ color: '#65676B', cursor: 'pointer', fontSize: 12 }}>Edit </span>
+                                        •
+                                        <Popconfirm
+                                            title="Are you sure to delete this comment?"
+                                            onConfirm={() => {
+                                                dispatch({
+                                                    type: DELETE_COMMENT_SAGA,
+                                                    commentId: comment.id,
+                                                    taskId: task.id,
+                                                })
+                                            }}
+                                            okText="Yes"
+                                            cancelText="No"
+                                        >
+                                            <span style={{ color: '#65676B', cursor: 'pointer', fontSize: 12 }}> Delete</span>
+                                        </Popconfirm>
+                                    </div> :
+                                    <div>
+                                        <span style={{ color: '#65676B', cursor: 'pointer', fontSize: 12 }}>Like </span>
+                                        •
+                                        <span style={{ color: '#65676B', cursor: 'pointer', fontSize: 12 }}> Response</span>
+                                    </div>}
+                            </div>
+                        </div>
+                    </div>
+                )
+            })
+        )
+    }
+
     return (
         <>
             <Modal
@@ -115,6 +170,7 @@ function ViewTaskModal(props) {
                         type: 'CLOSE_MODAL_VIEW_TASK',
                     });
                     setVisibleEditTaskName(false);
+                    setCommentContent('');
                 }}
                 width={1000}
             >
@@ -222,7 +278,10 @@ function ViewTaskModal(props) {
                                             }
                                         </div>
                                         <div className="input-comment">
-                                            <Input type="text" placeholder="Add a comment..." />
+                                            <Input type="text" placeholder="Add a comment..." value={commentContent}
+                                                onChange={(e) => {
+                                                    setCommentContent(e.target.value);
+                                                }} />
                                             {/* <p>
                                                 <span style={{ fontWeight: 500, color: 'gray' }}>Protip:</span>
                                                 <span>press
@@ -230,31 +289,32 @@ function ViewTaskModal(props) {
                                                     to comment</span>
                                             </p> */}
                                         </div>
+                                        <div>
+                                            <Button type="primary" style={{ height: 40 }} className="ml-2"
+                                                onClick={() => {
+                                                    if (commentContent === '') {
+                                                        openNotification('error', 'Fail!', 'Please add a comment...!');
+                                                        return;
+                                                    }
+                                                    let newComment = {
+                                                        user: {
+                                                            id: userLogin.id,
+                                                        },
+                                                        task: {
+                                                            id: task.id,
+                                                        },
+                                                        content: commentContent,
+                                                    };
+                                                    dispatch({
+                                                        type: CREATE_COMMENT_SAGA,
+                                                        newComment: newComment,
+                                                    })
+                                                    setCommentContent('');
+                                                }}>Sent</Button>
+                                        </div>
                                     </div>
                                     <div className="lastest-comment mt-4">
-                                        <div className="comment-item">
-                                            <div className="display-comment" style={{ display: 'flex' }}>
-                                                <div className="avatar">
-                                                    <Avatar src="https://res.cloudinary.com/fpt-food/image/upload/v1639790796/ReactJS_Jira_Bugs_Clone/thor_yr3qyw.jpg" />
-                                                </div>
-                                                <div>
-                                                    <p style={{ marginBottom: 5, fontSize: 16, color: '#42526E' }}>Lord Gaben
-                                                        {/* <span>a month ago</span> */}
-                                                    </p>
-                                                    <p style={{ marginBottom: 5, color: '172B4D' }}>
-                                                        Lorem ipsum dolor sit amet, consectetur
-                                                        adipisicing elit. Repellendus tempora ex
-                                                        voluptatum saepe ab officiis alias totam ad
-                                                        accusamus molestiae?
-                                                    </p>
-                                                    <div>
-                                                        <span style={{ color: '#929398', cursor: 'pointer' }}>Edit </span>
-                                                        •
-                                                        <span style={{ color: '#929398', cursor: 'pointer' }}> Delete</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        {renderCommnets()}
                                     </div>
                                 </div>
                             </div>

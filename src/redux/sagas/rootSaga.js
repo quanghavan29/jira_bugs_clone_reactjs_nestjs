@@ -11,6 +11,7 @@ import * as ProjectCategorySaga from './ProjectCategorySaga/ProjectCategorySaga'
 import * as ProjectSaga from './ProjectSaga/ProjectSaga';
 import * as UserSaga from './UserSaga/UserSaga';
 import * as TaskSaga from './TaskSaga/TaskSaga';
+import * as CommentSaga from './CommentSaga/CommentSaga';
 
 export function* rootSaga() {
     yield all([
@@ -26,5 +27,7 @@ export function* rootSaga() {
         UserSaga.userEventListener(),
         // Task
         TaskSaga.taskEventListener(),
+        // Comment
+        CommentSaga.commentEventListener(),
     ])
 }
